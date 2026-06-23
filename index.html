@@ -1215,6 +1215,7 @@ const modalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playModalClick() {
   try {
+    if (modalAudioCtx.state === 'suspended') modalAudioCtx.resume();
     const o = modalAudioCtx.createOscillator(), g = modalAudioCtx.createGain();
     o.connect(g); g.connect(modalAudioCtx.destination);
     o.frequency.value = 600; o.type = 'square';
@@ -1226,6 +1227,7 @@ function playModalClick() {
 
 function playModalChime() {
   try {
+    if (modalAudioCtx.state === 'suspended') modalAudioCtx.resume();
     [523,659,784].forEach((freq,i) => {
       const o = modalAudioCtx.createOscillator(), g = modalAudioCtx.createGain();
       o.connect(g); g.connect(modalAudioCtx.destination);
@@ -1541,6 +1543,7 @@ const QZ_POOL = [
 function makeQSyllable(level) {
   const pool = level ? getQzPoolForLevel(level) : QZ_POOL;
   const valid = pool.filter(e => e.length === 4 && e[0].length === 1);
+  if (!valid.length) return null; // 방어: 풀이 비어있으면 null 반환
   const pick = valid[Math.floor(Math.random() * valid.length)];
   return { syllable: pick[0], cho: pick[1], jung: pick[2], jong: pick[3] };
 }
@@ -1657,6 +1660,7 @@ function startQzSpin() {
 
       // 최종 음절 생성 (레벨별 풀)
       const syl = makeQSyllable(qzCurrentLevel);
+      if (!syl) { qzSpinning = false; return; } // 방어: 풀 비어있으면 조용히 종료
 
       qzCurrentSyl = syl;
       choBox.textContent  = syl.cho;  choBox.className  = 'qz-box qz-cho done';
@@ -1746,10 +1750,10 @@ function showQzHint() {
 }
 
 function closeQzModal() {
-  if (qzSpinning) return;
-  document.getElementById('qzModal').classList.remove('active');
+  // 스핀 중이어도 즉시 중지 후 닫기
   if (qzInterval) { clearInterval(qzInterval); qzInterval = null; }
   qzSpinning = false;
+  document.getElementById('qzModal').classList.remove('active');
   qzCurrentSyl = null;
   // TTS 버튼 숨기기 및 재생 중지
   const ttsBtn = document.getElementById('qzTtsBtn');
@@ -1762,9 +1766,9 @@ function closeQzModal() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('qzHintBtn').addEventListener('click', showQzHint);
   document.getElementById('qzXBtn').addEventListener('click', closeQzModal);
-  // 오버레이 바깥 클릭으로 닫기
+  // 오버레이 바깥 클릭으로 닫기 (스핀 중도 즉시 닫기)
   document.getElementById('qzModal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('qzModal') && !qzSpinning) closeQzModal();
+    if (e.target === document.getElementById('qzModal')) closeQzModal();
   });
 });
 
@@ -1780,7 +1784,7 @@ function combineKorean(cons, vowel) {
 }
 
 // 상하 배치 모음 (자음이 위, 모음이 아래)
-const TB_VOWS = ['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅢ','ㅟ','ㅚ','ㅝ'];
+const TB_VOWS = ['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅢ','ㅟ','ㅚ','ㅝ','ㅘ'];
 
 // 자모 결합 과정 애니메이션
 function showHint() {
