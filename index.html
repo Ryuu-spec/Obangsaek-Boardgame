@@ -18,10 +18,10 @@ html, body {
 }
 .board {
   display: grid;
-  grid-template-columns: repeat(13, var(--cell));
-  grid-template-rows: repeat(7, var(--cell));
+  grid-template-columns: repeat(13, minmax(0, var(--cell)));
+  grid-template-rows: repeat(7, minmax(0, var(--cell)));
   gap: var(--gap);
-  position: relative; /* 드래그 중인 말 토큰의 absolute 기준 */
+  position: relative;
 }
 .cell {
   border: 2px solid #aaa;
@@ -40,13 +40,16 @@ html, body {
   object-fit: contain;
   padding: 4px;
 }
+.cell img.jamo-tile {
+  filter: saturate(1.6);
+}
 .cell.start img,
 .cell.goal img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-.cell.start, .cell.goal { cursor: default; border: none; }
+.cell.start, .cell.goal { cursor: default; border: none; width: var(--cell); height: var(--cell); max-width: var(--cell); max-height: var(--cell); }
 .cell.fixed { cursor: default; }
 .center-panel {
   grid-column: 5 / 10;
@@ -973,6 +976,7 @@ html, body {
 </div>
 <script>
 const BASE = 'https://cdn.jsdelivr.net/gh/Ryuu-spec/Hangul_Board_Game@main/image/';
+const BASE_JAMO = 'https://cdn.jsdelivr.net/gh/Ryuu-spec/Obangsaek-Boardgame@main/Image/';
 const SPINNER_BASE = 'https://ryuu-spec.github.io/Hangul-Syllable-spinner/';
 
 const CONS = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -1963,10 +1967,10 @@ function buildBoard() {
   cp.innerHTML = `
     <img class="title" src="${BASE}title.png" alt="Hangul Board Game" style="width:80%; object-fit:contain; padding:0; margin:0; margin-top: calc(var(--cell) * 1.1);">
     <div class="controls" style="margin-top:2px;">
-      <div class="ctrl-box"><span class="ctrl-label">주사위</span><button class="dice-btn" id="dice-btn" onclick="rollDice(this)"></button></div>
-      <div class="ctrl-box"><span class="ctrl-label">리셋</span><button class="reset-btn" onclick="playClickSound(); buildBoard()"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12a8 8 0 1 1 1.5 4.8" stroke="white" stroke-width="2.5" stroke-linecap="round"/><polyline points="4,8 4,12 8,12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <div class="ctrl-box"><span class="ctrl-label">Roll the die</span><button class="dice-btn" id="dice-btn" onclick="rollDice(this)"></button></div>
+      <div class="ctrl-box"><span class="ctrl-label">Reset</span><button class="reset-btn" onclick="playClickSound(); buildBoard()"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12a8 8 0 1 1 1.5 4.8" stroke="white" stroke-width="2.5" stroke-linecap="round"/><polyline points="4,8 4,12 8,12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
       <div class="ctrl-box" style="position:relative;">
-        <span class="ctrl-label">게임 방법</span>
+        <span class="ctrl-label">How to play</span>
         <button class="info-btn" onclick="document.getElementById('infoPopup').classList.toggle('open')">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="9" stroke="#222" stroke-width="2"/>
@@ -1976,40 +1980,40 @@ function buildBoard() {
         </button>
         <div class="info-popup" id="infoPopup">
           <button class="info-popup-close" onclick="document.getElementById('infoPopup').classList.remove('open')">&#10005;</button>
-          <p class="info-popup-title">게임 방법</p>
+          <p class="info-popup-title">How to play</p>
           <div class="info-popup-row">
             <span class="info-popup-num">1.</span>
-            <span class="info-popup-text">주사위를 굴려 말을 이동하세요</span>
+            <span class="info-popup-text">Roll the die and move your piece</span>
           </div>
           <div class="info-popup-row">
             <span class="info-popup-num">2.</span>
             <div>
-              <div class="info-popup-text">자모 칸에 멈추면 스피너가 나타나요</div>
-              <div class="info-popup-text">합쳐서 소리 내어 읽어보세요!</div>
+              <div class="info-popup-text">Land on a tile → spinner appears</div>
+              <div class="info-popup-text">Blend and say it aloud! 🔊</div>
               <div class="info-badge-wrap">
-                <span class="info-badge-ok">성공 &#x2192; 그대로</span>
-                <span class="info-badge-fail">실패 &#x2192; 뒤로</span>
+                <span class="info-badge-ok">Success &#x2192; stay</span>
+                <span class="info-badge-fail">Fail &#x2192; go back</span>
               </div>
             </div>
           </div>
           <div class="info-popup-row">
             <img class="tile-icon" src="https://cdn.jsdelivr.net/gh/Ryuu-spec/Hangul_Board_Game@main/image/question.png" alt="?">
             <div>
-              <div class="info-popup-text">받침 퀴즈 &#x2014; 받침까지 읽어보세요</div>
+              <div class="info-popup-text">Batchim quiz &#x2014; read with the final consonant</div>
               <div class="info-badge-wrap">
-                <span class="info-badge-ok">성공 &#x2192; 그대로</span>
-                <span class="info-badge-fail">실패 &#x2192; 뒤로</span>
+                <span class="info-badge-ok">Success &#x2192; stay</span>
+                <span class="info-badge-fail">Fail &#x2192; go back</span>
               </div>
             </div>
           </div>
           <div class="info-popup-row">
             <img class="tile-icon" src="https://cdn.jsdelivr.net/gh/Ryuu-spec/Hangul_Board_Game@main/image/mission.png" alt="탈">
-            <span class="info-popup-text">이벤트 칸 &#x2014; 복주머니를 클릭하세요!</span>
+            <span class="info-popup-text">Event tile &#x2014; click the lucky bag!</span>
           </div>
           <hr class="info-popup-divider">
           <div class="info-popup-row">
             <span class="info-popup-num" style="color:#ffd700;">&#x1F3C6;</span>
-            <span class="info-popup-text">가장 먼저 GOAL에 도착하면 승리!</span>
+            <span class="info-popup-text">First to reach GOAL wins!</span>
           </div>
         </div>
       </div>
@@ -2052,10 +2056,14 @@ function buildBoard() {
     } else {
       const data = charByPos[key];
       if (data.type === 'cons') {
-        cell.appendChild(makeImg(`${BASE}${encodeURIComponent(data.char)}.png`, data.char));
+        const img = makeImg(`${BASE_JAMO}${encodeURIComponent(data.char)}.png`, data.char);
+        img.classList.add('jamo-tile');
+        cell.appendChild(img);
         cell.addEventListener('click', () => openSpinner('cons', data.char, cell));
       } else {
-        cell.appendChild(makeImg(`${BASE}${encodeURIComponent(data.char)}.png`, data.char));
+        const img = makeImg(`${BASE_JAMO}${encodeURIComponent(data.char)}.png`, data.char);
+        img.classList.add('jamo-tile');
+        cell.appendChild(img);
         cell.addEventListener('click', () => openSpinner('vowel', data.char, cell));
       }
     }
@@ -2068,6 +2076,8 @@ function buildBoard() {
   spacer.style.gridColumn = '7';
   spacer.style.gridRow = '1';
   spacer.style.visibility = 'hidden';
+  spacer.style.width = 'var(--cell)';
+  spacer.style.height = 'var(--cell)';
   board.appendChild(spacer);
 }
 
@@ -2230,7 +2240,7 @@ function preloadImages() {
   const specials = ['start', 'goal', 'question', 'mission', 'title', 'boy_1', 'boy_2', 'boy_3', 'girl_1', 'girl_2', 'girl_3',
     'card_0','card_1','card_2','card_3','card_4','card_5','card_6','card_7','card_8'];
   const srcs = [
-    ...allChars.map(c => `${BASE}${encodeURIComponent(c)}.png`),
+    ...allChars.map(c => `${BASE_JAMO}${encodeURIComponent(c)}.png`),
     ...specials.map(s => `${BASE}${s}.png`)
   ];
 
