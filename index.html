@@ -939,7 +939,7 @@ html, body {
   <div class="qz-modal-wrap">
     <div class="qz-modal">
       <div class="qz-inner">
-        <div id="qzTitle" class="qz-title"><span class="spark">✦</span>받침 퀴즈<span class="spark">✦</span></div>
+        <div id="qzTitle" class="qz-title"><span class="spark">✦</span>Batchim Quiz<span class="spark">✦</span></div>
         <div class="qz-combo" id="qzCombo">
           <div class="qz-box qz-cho"  id="qzCho">?</div>
           <div class="qz-operator">+</div>
@@ -948,10 +948,10 @@ html, body {
           <div class="qz-box qz-jong" id="qzJong">?</div>
         </div>
         <div class="qz-anim-stage" id="qzAnimStage"></div>
-        <p class="qz-hint" id="qzHint">초성 + 중성 + 종성을 합쳐 읽어보세요! 🔊</p>
+        <p class="qz-hint" id="qzHint">Blend all three and say it aloud!</p>
         <div class="qz-btn-row">
-          <button class="qz-hint-btn" id="qzHintBtn" style="display:none;">💡 정답 보기</button>
-          <button class="qz-tts-btn" id="qzTtsBtn" onclick="speakQzResult()" style="display:none;">🔊 듣기</button>
+          <button class="qz-hint-btn" id="qzHintBtn" style="display:none;">💡 Show Answer</button>
+          <button class="qz-tts-btn" id="qzTtsBtn" onclick="speakQzResult()" style="display:none;">🔊 Listen</button>
         </div>
       </div>
     </div>
@@ -966,10 +966,10 @@ html, body {
     <div class="modal-combo" id="modalCombo"></div>
     <div class="modal-result-row" id="modalResultRow"></div>
     <div class="modal-anim-stage" id="modalAnimStage"></div>
-    <p class="modal-hint" id="modalHint">합쳐서 소리 내어 읽어보세요!</p>
+    <p class="modal-hint" id="modalHint">Blend and say it aloud!</p>
     <div class="modal-btn-row">
-      <button class="modal-hint-btn" id="modalHintBtn" onclick="showHint()" style="display:none;">💡 정답 보기</button>
-      <button class="modal-tts-btn" id="modalTtsBtn" onclick="speakCombined()" style="display:none;">🔊 듣기</button>
+      <button class="modal-hint-btn" id="modalHintBtn" onclick="showHint()" style="display:none;">💡 Show Answer</button>
+      <button class="modal-tts-btn" id="modalTtsBtn" onclick="speakCombined()" style="display:none;">🔊 Listen</button>
     </div>
     <button class="modal-x-btn" id="modalCloseBtn" onclick="closeSpinner()">✕</button>
   </div>
@@ -1268,7 +1268,7 @@ function showSpinnerModal(type, fixedChar, triggerCell) {
     if (pool.length === 0) pool = validVows; // fallback
     modeClass = 'consonant-mode';
     titleText = 'Hangul Vowel Shuffle';
-    hintText  = '합쳐서 읽어보세요! 🔊';
+    hintText  = 'Blend and say it aloud!';
     layout = `
       <div class="modal-char-box modal-fixed">${fixedChar}</div>
       <div class="modal-operator">+</div>
@@ -1288,7 +1288,7 @@ function showSpinnerModal(type, fixedChar, triggerCell) {
     if (pool.length === 0) pool = validCons.length > 0 ? validCons : CONS;
     modeClass = 'vowel-mode';
     titleText = 'Hangul Consonant Shuffle';
-    hintText  = '합쳐서 읽어보세요! 🔊';
+    hintText  = 'Blend and say it aloud!';
     layout = `
       <div class="modal-char-box modal-spin" id="modalSpinBox">?</div>
       <div class="modal-operator">+</div>
@@ -1430,11 +1430,11 @@ function closeSpinner() {
 // ===== ? 칸 받침 퀴즈 — 5단계 음절 풀 =====
 // 레벨별 타이틀·힌트·색상
 const QZ_META = {
-  1: { title: '📗 받침 퀴즈 ①', hint: 'ㅇ·ㄴ·ㅁ 받침 — 코와 입으로 울리는 비음이에요! 🔊' },
-  2: { title: '📘 받침 퀴즈 ②', hint: 'ㄱ·ㄷ·ㅂ 받침 — 입을 닫으면서 공기 흐름이 멈춰요! 💪' },
-  3: { title: '📙 받침 퀴즈 ③', hint: 'ㄹ 받침 — 혀끝을 윗니 뒤 잇몸에 살짝 대어보세요! 👅' },
-  4: { title: '📕 받침 퀴즈 ④', hint: 'ㅅ·ㅈ·ㅊ·ㅋ·ㅌ·ㅍ·ㅎ 받침 — 쓰는 것과 소리가 달라요! 대표음 규칙 🌸' },
-  5: { title: '🏆 받침 퀴즈 ⑤', hint: '겹받침! 다 를 붙여 읽어보세요 — 읽다·없다·앉다… 받침 마스터가 되어보세요! 🏆' },
+  1: { title: '📗 BATCHIM QUIZ ①', hint: 'ㅇ·ㄴ·ㅁ batchim — nasal sounds flowing through nose and mouth! 🔊' },
+  2: { title: '📘 BATCHIM QUIZ ②', hint: 'ㄱ·ㄷ·ㅂ batchim — air stops as your mouth closes! 💪' },
+  3: { title: '📙 BATCHIM QUIZ ③', hint: 'ㄹ batchim — touch your tongue tip lightly behind your upper teeth! 👅' },
+  4: { title: '📕 BATCHIM QUIZ ④', hint: 'ㅅ·ㅈ·ㅊ·ㅋ·ㅌ·ㅍ·ㅎ batchim — written ≠ sound! Representative sound rule 🌸' },
+  5: { title: '🏆 BATCHIM QUIZ ⑤', hint: 'Double batchim! Try reading them — 읽다·없다·앉다… Become a batchim master! 🏆' },
 };
 const QZ_LEVEL_COLOR = {
   1: '#7BC67E', 2: '#64B6F7', 3: '#F7B24C', 4: '#FF8A65', 5: '#C77DFF',
@@ -1989,7 +1989,7 @@ function buildBoard() {
             <span class="info-popup-num">2.</span>
             <div>
               <div class="info-popup-text">Land on a tile → spinner appears</div>
-              <div class="info-popup-text">Blend and say it aloud! 🔊</div>
+              <div class="info-popup-text">Blend and say it aloud!</div>
               <div class="info-badge-wrap">
                 <span class="info-badge-ok">Success &#x2192; stay</span>
                 <span class="info-badge-fail">Fail &#x2192; go back</span>
